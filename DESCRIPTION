@@ -1,16 +1,19 @@
 Package: vgi4bio
-Title: What the Package Does (One Line, Title Case)
+Title: Capitalizing on Opportunistic Data for Monitoring Relative Abundances of Species
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Karine",
+           family = "Princé",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "karine.prince@mnhn.fr",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+Description: Functions, data sets and examples to estimate relative species abundances and their respective preferences for different habitat types, using opportunistic
+data. The development of the statistical models behind the package is described in [Coron et al. 2017]<https: //doi.org/10.1007/s10651-018-0398-2>.
+BugReports: https://github.com/KarinePrince/vgi4bio/issues
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
+Suggests: 
+    testthat
