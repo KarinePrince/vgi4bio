@@ -17,3 +17,26 @@ usethis::use_git(message = ":bulb: Update documentation")
 
 usethis::use_readme_rmd()
 usethis::use_vignette("tutorial")
+
+# build package
+devtools::check()
+devtools::install()
+devtools::build_readme()
+usethis::use_r("fun_abundance_estimation.R")
+usethis::use_r("fun_abundance_habitat_estimation.R")
+usethis::use_git(message = "fun_abundance: start documentation")
+usethis::use_test(name = "test_fun_abundance_estim")
+
+devtools::load_all()
+
+# CI
+usethis::use_travis()
+usethis::use_github_action_check_standard()
+usethis::use_github_action("pkgdown")
+
+# use pkgdown
+pkgdown::build_site()
+usethis::use_git_ignore("docs")
+usethis::use_git_ignore("inst/docs")
+
+
