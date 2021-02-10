@@ -1,19 +1,76 @@
 ---
 title: "tutorial"
-output: rmarkdown::html_vignette
-vignette: >
+author: "Karine Princé"
+date: "`r Sys.Date()`"
+output: 
+  html_vignette:
+    number_sections: yes
+    toc: yes
+bibliography: references.bib
+link-citations: true
+vignette: |
   %\VignetteIndexEntry{tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+\newcommand{\tr}{\hspace{-0.05cm}^{\top}\hspace{-0.05cm}} 
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.align = "center")
 ```
 
-```{r setup}
-library(vgi4bio)
+The package `vgi4bio` contains functions for the combined analysis of opportunistic and standardized dataset to estimate relative abundances of multiple species, and habitat preferences.  
+  
+  
+To run the different analysis described, several packages are required and are loaded:
+
+```{r}
+#library()
 ```
+
+
+
+## The Aquitaine data set
+
+The Aquitaine dataset is used to illustrate sevral methods. It is stored as a list and contains the data used to develop the models in [Giraud et al. 2015](https://doi.org/10.1111/biom.12431) and [Coron et al. 2017](). 
+
+The data.frame Aquitaine$ contains the following variables (for a complete list of variables, see the suggested citation):
+
+*Species*: this variable stores the code of the bird species. This code is formed by concatenating the first three letters of the genus and the first three letters of the species (see the first column of Table 1 in the main text);  
+
+*Site*: this variable stores the code of the 63 ACT sites used for the model fit;  
+
+*Effort\_ACT*: the number of listening points-years implemented in the ACT program for the site stored in the variable *Site*;  
+
+*X\_ACT*: the abundance of the species stored in the variable *Species* detected in the site stored in the
+  variable *Site* by the ACT program;  
+
+*X\_LPO*: the abundance of the species stored in the variable *Species* detected in the site stored in the variable *Site* by the opportunistic LPO program;
+
+
+## Calculate the relative density 
+
+# Model based on the combination of the complete ACT dataset and the LPO dataset
+
+In this example, we consider the case of the model combining the 'reduced' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see [Giraud et al. 2015](https://doi.org/10.1111/biom.12431).
+
+First, we format the data for the fit.
+
+```{r}
+datred <- rbind(cbind(tab[,c("Species","Site")],Xijk=tab$X_ACTred,Scheme="ACT"),
+                cbind(tab[,c("Species","Site")],Xijk=tab$X_LPO,Scheme="LPO"))
+
+```
+
+The function `fun_abund_estim` allows to fit the model.
+
+```{r}
+datred <- rbind(cbind(tab[,c("Species","Site")],Xijk=tab$X_ACTred,Scheme="ACT"),
+                cbind(tab[,c("Species","Site")],Xijk=tab$X_LPO,Scheme="LPO"))
+
+```
+
+
+
+
+## Assess predictive power of the model
