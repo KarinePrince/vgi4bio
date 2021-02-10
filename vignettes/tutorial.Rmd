@@ -32,7 +32,7 @@ To run the different analysis described, several packages are required and are l
 
 ## The Aquitaine data set
 
-The Aquitaine dataset is used to illustrate sevral methods. It is stored as a list and contains the data used to develop the models in [Giraud et al. 2015](https://doi.org/10.1111/biom.12431) and [Coron et al. 2017](). 
+The Aquitaine dataset is used to illustrate sevral methods. It is stored as a list and contains the data used to develop the models in @Giraud2015 and @Coron2017. 
 
 The data.frame Aquitaine$ contains the following variables (for a complete list of variables, see the suggested citation):
 
@@ -52,7 +52,7 @@ The data.frame Aquitaine$ contains the following variables (for a complete list 
 
 # Model based on the combination of the complete ACT dataset and the LPO dataset
 
-In this example, we consider the case of the model combining the 'reduced' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see [Giraud et al. 2015](https://doi.org/10.1111/biom.12431).
+In this example, we consider the case of the model combining the 'reduced' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see @Giraud2015.
 
 First, we format the data for the fit.
 

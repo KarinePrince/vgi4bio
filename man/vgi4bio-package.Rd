@@ -16,7 +16,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Karine Princé \email{karine.prince@mnhn.fr} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Karine Princé \email{karine.prince@mnhn.fr} (\href{https://orcid.org/0000-0001-7739-7438}{ORCID})
 
 }
 \keyword{internal}

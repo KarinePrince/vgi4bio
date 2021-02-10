@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 ## vgi4bio
 
 <!-- badges: start -->
+[![Travis build status](https://travis-ci.com/KarinePrince/vgi4bio.svg?branch=master)](https://travis-ci.com/KarinePrince/vgi4bio)
 <!-- badges: end -->
 
 The package of vgi4bio contains functions to estimate relative species abundances from opportunistic records, using data combination methods.

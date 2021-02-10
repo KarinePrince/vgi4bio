@@ -6,7 +6,7 @@ Authors@R:
            family = "Princé",
            role = c("aut", "cre"),
            email = "karine.prince@mnhn.fr",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0001-7739-7438"))
 Description: Functions, data sets and examples to estimate relative species abundances and their respective preferences for different habitat types, using opportunistic
 data. The development of the statistical models behind the package is described in [Coron et al. 2017]<https: //doi.org/10.1007/s10651-018-0398-2>.
 BugReports: https://github.com/KarinePrince/vgi4bio/issues
