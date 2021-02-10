@@ -17,11 +17,11 @@ usethis::use_readme_rmd()
 usethis::use_vignette("tutorial")
 usethis::use_git(message = ":bulb: Update documentation")
 
-# rmarkdown::render("README.Rmd")     #Each time I edit the README.Rmd I have to update the .md with this command
-# usethis::use_build_ignore("README.html")
-# usethis::use_git_ignore("README.html")
-# usethis::use_git(message = ":pencil: Edit README")
-# system("git push")
+rmarkdown::render("README.Rmd")     #Each time I edit the README.Rmd I have to update the .md with this command
+usethis::use_build_ignore("README.html")
+usethis::use_git_ignore("README.html")
+usethis::use_git(message = ":pencil: Edit README")
+system("git push")
 
 # build package
 devtools::check()
