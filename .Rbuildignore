@@ -3,3 +3,4 @@
 ^_devhistory\.R$
 ^\.DS_Store$
 ^LICENSE\.md$
+^README\.Rmd$

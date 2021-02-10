@@ -23,9 +23,14 @@ devtools::check()
 devtools::install()
 devtools::build_readme()
 usethis::use_r("fun_abundance_estimation.R")
-usethis::use_r("fun_abundance_habitat_estimation.R")
 usethis::use_git(message = "fun_abundance: start documentation")
+usethis::use_git(message = "fun_abundance: update function")
 usethis::use_test(name = "test_fun_abundance_estim")
+
+usethis::use_r("fun_abundance_habitat_estimation.R")
+usethis::use_git(message = "fun_abundance_hab: start documentation")
+usethis::use_git(message = "fun_abundance_hab: update function")
+usethis::use_test(name = "test_fun_abundance_hab_estim")
 
 devtools::load_all()
 
