@@ -40,6 +40,7 @@ fun_abund_estim <- function(df, family="quasipoisson", datapred=NULL, type = "re
     cat("\nCompute Abundance Predictions\n=======================\n")
     N_pred <- predict(mod, newdata = datapred, type = type)
   }
+  return(N_pred)
 }
 
 

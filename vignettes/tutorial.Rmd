@@ -57,16 +57,14 @@ In this example, we consider the case of the model combining the 'reduced' ACT d
 First, we format the data for the fit.
 
 ```{r}
-datred <- rbind(cbind(tab[,c("Species","Site")],Xijk=tab$X_ACTred,Scheme="ACT"),
-                cbind(tab[,c("Species","Site")],Xijk=tab$X_LPO,Scheme="LPO"))
+df <- rbind(cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_ACTred,Scheme="ACT"),
+                cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_LPO,Scheme="LPO"))
 
 ```
 
 The function `fun_abund_estim` allows to fit the model.
 
 ```{r}
-datred <- rbind(cbind(tab[,c("Species","Site")],Xijk=tab$X_ACTred,Scheme="ACT"),
-                cbind(tab[,c("Species","Site")],Xijk=tab$X_LPO,Scheme="LPO"))
 
 ```
 
