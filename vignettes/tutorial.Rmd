@@ -61,12 +61,19 @@ df <- rbind(cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_ACT,Effort=A
                 cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_LPO,Effort=1,Dataset="LPO"))
 #we rename columns to match with expected format of the function
 colnames(df) <- c("species", "site", "N_obs","effort", "dataset")
+
+datapred <- Aquitaine[Aquitaine$Site_in_STOC==1 & Aquitaine$Species_in_ACT==1,]
+datapred <- cbind(datapred[,1:2], Effort=1, Dataset="ACT")
+#we rename columns to match with expected format of the function
+library(stringr)
+colnames(datapred) <- str_to_lower(colnames(datapred))
+
 ```
 
 The function `fun_abund_estim` allows to fit the model.
 
 ```{r}
-
+fun_abund_estim(df=df,family="quasipoisson", datapred=datapred, type = "response")
 ```
 
 
