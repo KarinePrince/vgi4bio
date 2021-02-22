@@ -7,7 +7,7 @@
 #' @param df a data.frame containing original species count data. The data.frame should have 5 columns with headers, namely:
 #'  "species": the variable that stores the name/code of the species,
 #'  "site": the variable that stores the observation sites,
-#'  "scheme": the variable that stores the monitoring program to which the observation data are associated
+#'  "dataset": the variable that stores the dataset (e.g. monitoring program) to which the observation data are associated
 #'  "effort": a measure of effort that depends on the monitoring program (for example, it can be set to the number of survey points-years implemented in the standardardized program for the site stored in the variable Site)
 #'  "N_obs": the observed abundance/count of each *species* detected at each *site*;
 #' #' @return What the function returns
@@ -29,7 +29,7 @@ fun_abund_estim <- function(df, family="quasipoisson", datapred=NULL, type = "re
 
   ## run model
   cat("\nRun Abundance Model\n=======================\n")
-  mod <- glm(N_obs ~ species*scheme + species*site + site*scheme, offset=log(effort),
+  mod <- glm(N_obs ~ species*dataset + species*site + site*dataset, offset=log(effort),
              data = df, family= family)
   return(list(summary(mod),confint(mod)))
 

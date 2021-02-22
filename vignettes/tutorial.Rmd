@@ -52,14 +52,15 @@ The data.frame Aquitaine$ contains the following variables (for a complete list 
 
 # Model based on the combination of the complete ACT dataset and the LPO dataset
 
-In this example, we consider the case of the model combining the 'reduced' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see @Giraud2015.
+In this example, we consider the case of the model combining the 'complete' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see @Giraud2015.
 
 First, we format the data for the fit.
 
 ```{r}
-df <- rbind(cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_ACTred,Scheme="ACT"),
-                cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_LPO,Scheme="LPO"))
-
+df <- rbind(cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_ACT,Effort=Aquitaine$Effort_ACT,Dataset="ACT"),
+                cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_LPO,Effort=1,Dataset="LPO"))
+#we rename columns to match with expected format of the function
+colnames(df) <- c("species", "site", "N_obs","effort", "dataset")
 ```
 
 The function `fun_abund_estim` allows to fit the model.

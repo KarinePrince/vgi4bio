@@ -38,6 +38,9 @@ usethis::use_git(message = "fun_abundance_hab: update function")
 usethis::use_test(name = "test_fun_abundance_hab_estim")
 
 devtools::test()
+usethis::use_testthat()
+usethis::use_git(message = ":white_check_mark: Setup testthat")
+
 # check package
 devtools::load_all()
 
