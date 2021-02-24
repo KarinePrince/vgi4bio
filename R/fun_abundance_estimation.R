@@ -29,7 +29,7 @@ fun_abund_estim <- function(df, family, datapred=NULL, type = "response"){
 
   ## run model
   cat("\nRun Abundance Model\n=======================\n")
-  mod <- glm(N_obs ~ species*dataset + species*site + site*dataset, offset=log(effort),
+  mod <- glm(N_obs ~ species*dataset + species*site + site*dataset + offset(log(effort)),
              data = df, family= family)
   mod.summ <- summary(mod)
   return(mod.summ)
