@@ -73,7 +73,7 @@ colnames(datapred) <- str_to_lower(colnames(datapred))
 The function `fun_abund_estim` allows to fit the model.
 
 ```{r}
-fun_abund_estim(df=df,family="quasipoisson", datapred=datapred, type = "response")
+fun_abund_estim(df=df,family="quasipoisson", datapred=NULL, type = "response")
 ```
 
 

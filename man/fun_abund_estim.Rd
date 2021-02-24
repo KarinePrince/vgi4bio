@@ -4,14 +4,20 @@
 \alias{fun_abund_estim}
 \title{Short Title of the Function (One Line)}
 \usage{
-fun_abund_estim(x, family = "quasipoisson", datapred = NULL, type = "response")
+fun_abund_estim(
+  df,
+  family = "quasipoisson",
+  datapred = NULL,
+  type = "response"
+)
 }
 \arguments{
-\item{x}{a data.frame containing original species count data. The data.frame should have 4 columns with headers, namely:
+\item{df}{a data.frame containing original species count data. The data.frame should have 5 columns with headers, namely:
 "species": the variable that stores the name/code of the species,
 "site": the variable that stores the observation sites,
-"scheme": the variable that stores the monitoring program to which the observation data are associated
-"effort" a measure of effort that depends on the monitoring program (for example, it can be set to the number of survey points-years implemented in the standardardized program for the site stored in the variable Site)
+"dataset": the variable that stores the dataset (e.g. monitoring program) to which the observation data are associated
+"effort": a measure of effort that depends on the monitoring program (for example, it can be set to the number of survey points-years implemented in the standardardized program for the site stored in the variable Site)
+"N_obs": the observed abundance/count of each \emph{species} detected at each \emph{site};
 #' @return What the function returns}
 }
 \description{
@@ -23,7 +29,7 @@ A longer description of what the function does (several lines)
 
 }
 \references{
-\href{https://doi.org/10.1111/biom.12431}{Giraud et al. 2015}
+
 }
 \author{
 Karine Princé
