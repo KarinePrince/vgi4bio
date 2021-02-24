@@ -22,14 +22,14 @@
 
 ## estimation of abundance based on opportunistic survey data combined to standardized data
 
-fun_abund_estim <- function(df=df, family="quasipoisson", datapred=NULL, type = "response"){
+fun_abund_estim <- function(df, family="quasipoisson", datapred=NULL, type = "response"){
 
   ## Define
 
 
   ## run model
   cat("\nRun Abundance Model\n=======================\n")
-  mod <- glm(N_obs ~ species*dataset + species*site + site*dataset + offset(log(effort)),
+  mod <- glm(N_obs ~ species*dataset + species*site + site*dataset, offset=log(effort),
              data = df, family= family)
   mod.summ <- summary(mod)
   return(mod.summ)
