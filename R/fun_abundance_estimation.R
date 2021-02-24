@@ -3,7 +3,7 @@
 #' @author Karine Princé
 #' @references
 #' @description A longer description of what the function does (several lines)
-#' @import stats::glm
+#' @import
 #' @param df a data.frame containing original species count data. The data.frame should have 5 columns with headers, namely:
 #'  "species": the variable that stores the name/code of the species,
 #'  "site": the variable that stores the observation sites,
