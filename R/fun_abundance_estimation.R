@@ -22,7 +22,7 @@
 
 ## estimation of abundance based on opportunistic survey data combined to standardized data
 
-fun_abund_estim <- function(df, family, datapred=NULL, type = "response"){
+fun_abund_estim <- function(df, family="quasipoisson", datapred=NULL, type = "response"){
 
   ## Define
 
