@@ -3,14 +3,14 @@
 #' @author Karine Princé
 #' @references
 #' @description A longer description of what the function does (several lines)
-#' @import
+#' @importFrom stats glm
 #' @param df a data.frame containing original species count data. The data.frame should have 5 columns with headers, namely:
 #'  "species": the variable that stores the name/code of the species,
 #'  "site": the variable that stores the observation sites,
 #'  "dataset": the variable that stores the dataset (e.g. monitoring program) to which the observation data are associated
 #'  "effort": a measure of effort that depends on the monitoring program (for example, it can be set to the number of survey points-years implemented in the standardardized program for the site stored in the variable Site)
 #'  "N_obs": the observed abundance/count of each *species* detected at each *site*;
-#' #' @return What the function returns
+#' #' @return
 #'
 #'
 #' @examples
