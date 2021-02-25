@@ -31,7 +31,6 @@ fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("l
   cat("\nRun Abundance Model\n=======================\n")
   mod <- stats::glm(N_obs ~ species*dataset + species*site + site*dataset, offset=log(effort),
              data = df, family= family)
-  mod.summ <- summary(mod)
 
   ## look at predictive power of the model
   if(is.null(datapred)){
@@ -41,7 +40,7 @@ fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("l
     N_pred <- stats::predict(mod, newdata = datapred, type = type)
   }
 
-  return(list(mod=mod))
+  return(list(mod=mod,N_pred=N_pred))
 }
 
 
