@@ -22,7 +22,7 @@ fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("l
 
   ## Check input data prior modeling
   list_var <- c("species","site","N_obs","dataset","effort")
-  if(!all(list_var %in% df))
+  if(length(intersect(list_var, colnames(df))) != length(list_var))
     stop("variables are missing or data frame headers do not match expected format\n")
   if (any(is.na(df$N_obs)))
     stop("Observation variable contain 'NA' values\n")

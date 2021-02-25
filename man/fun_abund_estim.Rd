@@ -7,25 +7,26 @@
 fun_abund_estim(
   df,
   family = "quasipoisson",
-  datapred = NULL,
-  type = "response"
+  newdata = NULL,
+  type = c("link", "response", "terms")
 )
 }
 \arguments{
-\item{df}{a data.frame containing original species count data. The data.frame should have 5 columns with headers, namely:
+\item{df}{a data.frame containing original species count data. The data.frame should contain 5 columns with the following headers:
 "species": the variable that stores the name/code of the species,
 "site": the variable that stores the observation sites,
 "dataset": the variable that stores the dataset (e.g. monitoring program) to which the observation data are associated
 "effort": a measure of effort that depends on the monitoring program (for example, it can be set to the number of survey points-years implemented in the standardardized program for the site stored in the variable Site)
 "N_obs": the observed abundance/count of each \emph{species} detected at each \emph{site};
-#' @return}
+@param family string setting the distribution of the error term in the GLM, default='quasipoisson', but can be 'poisson'.
+@param newdata an optional data frame in which to look for variables with which to predict and assess the predictive power of the model. Default is NULL. Is newdata is not provided, predicted values are not computed.
+@type the type of prediction required. The default is on the scale of the linear predictors; the alternative "response" is on the scale of the response variable. Thus for a quasipoisson poisson model the default predictions are of log-odds (probabilities on log scale) and type = "response" gives the predicted probabilities. The "terms" option returns a matrix giving the fitted values of each term in the model formula on the linear predictor scale.}
 }
 \description{
-A longer description of what the function does (several lines)
+estimation of abundance based on opportunistic survey data combined to standardized data
 }
 \examples{
-
-#' @export
+see the vignette("tutorial") for some examples
 
 }
 \references{
