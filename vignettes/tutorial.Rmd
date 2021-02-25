@@ -1,5 +1,5 @@
 ---
-title: "tutorial"
+title: "Tutorial"
 author: "Karine Princé"
 date: "`r Sys.Date()`"
 output: 
@@ -21,20 +21,17 @@ knitr::opts_chunk$set(fig.align = "center")
 
 The package `vgi4bio` contains functions for the combined analysis of opportunistic and standardized dataset to estimate relative abundances of multiple species, and habitat preferences.  
   
-  
-To run the different analysis described, several packages are required and are loaded:
-
-```{r}
-#library()
-```
-
 
 
 ## The Aquitaine data set
 
-The Aquitaine dataset is used to illustrate sevral methods. It is stored as a list and contains the data used to develop the models in @Giraud2015 and @Coron2017. 
+The Aquitaine dataset is used to illustrate sevral methods. It is stored as a list and contains the data used to develop the models in @Giraud2015 and @Coron2018. 
 
-The data.frame Aquitaine$ contains the following variables (for a complete list of variables, see the suggested citation):
+```{r, eval=F}
+data(Aquitaine)
+```
+
+The data.frame Aquitaine contains the following variables (for a complete list of variables, see the suggested citation):
 
 *Species*: this variable stores the code of the bird species. This code is formed by concatenating the first three letters of the genus and the first three letters of the species (see the first column of Table 1 in the main text);  
 
@@ -48,15 +45,14 @@ The data.frame Aquitaine$ contains the following variables (for a complete list 
 *X\_LPO*: the abundance of the species stored in the variable *Species* detected in the site stored in the variable *Site* by the opportunistic LPO program;
 
 
-## Calculate the relative density 
-
-# Model based on the combination of the complete ACT dataset and the LPO dataset
+## Calculate the relative density
 
 In this example, we consider the case of the model combining the 'complete' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see @Giraud2015.
 
 First, we format the data for the fit.
 
-```{r}
+```{r, eval=F}
+data(Aquitaine)
 df <- rbind(cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_ACT,Effort=Aquitaine$Effort_ACT,Dataset="ACT"),
                 cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_LPO,Effort=1,Dataset="LPO"))
 #we rename columns to match with expected format of the function
@@ -72,32 +68,36 @@ colnames(datapred) <- str_to_lower(colnames(datapred))
 
 The function `fun_abund_estim` allows to fit the model.
 
-```{r}
+```{r, eval=F}
 abund.mod <- fun_abund_estim(df=df, family="quasipoisson", newdata=NULL, type = "response")
-abund.mod
+#check the model summary 
+summary(abund.mod$mod)
 ```
 
 
+## Assess the predictive power of the model
 
-## Assess predictive power of the model
+If `newdata` is provided, the function `fun_abund_estim` allows to estimate the predicted values, and further assess the predictive power of the model.
 
-If _newdata_ is provided, the function `fun_abund_estim` allows to estimate the predicted values, and further assess the predictive power of the model.
-
-```{r}
+```{r, eval=F}
 abund.predmod <- fun_abund_estim(df=df, family="quasipoisson", newdata=datapred, type = "response")
+#check the model summary 
+summary(abund.predmod$mod)
+#check the first predicted values
+head(abund.predmod$N_pred)
 ```
 
-We then use _fun_pearsons_ et _fun_braycurt_ to calculate Pearsons and Bray-Curtis statistic values to compare predicted (*N_pred*) and estimates from other estimaton approaches (*N_ref*).
+We then use 'fun_pearsons' et 'fun_braycurt' to calculate Pearsons and Bray-Curtis statistic values to compare predicted estimates (*N_pred*) and estimates from other estimaton approaches (*N_ref*).
 
-```{r}
+```{r,eval=F}
 #estimate species abundance species with another approach
 N_STOC <- tabpred$X_STOC/tabpred$Effort_STOC
 
 #calculate Pearsons statistics
-pearson.stat <- fun_pearsons(N_pred=N_pred, N_ref=N_STOC)
+pearson.stat <- fun_pearsons(N_pred=abund.predmod$N_pred, N_ref=N_STOC)
 
 #calculate Bray_curtis statistics
-braycurt.stat <- fun_braycurt(N_pred=N_pred, N_ref=N_STOC)
+braycurt.stat <- fun_braycurt(N_pred=abund.predmod$N_pred, N_ref=N_STOC)
       
 ```
 
