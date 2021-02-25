@@ -98,6 +98,6 @@ pearson.stat <- fun_pearsons(N_pred=N_pred, N_ref=N_STOC)
 
 #calculate Bray_curtis statistics
 braycurt.stat <- fun_braycurt(N_pred=N_pred, N_ref=N_STOC)
-
+      
 ```
 

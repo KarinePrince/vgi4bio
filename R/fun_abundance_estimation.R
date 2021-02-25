@@ -33,16 +33,16 @@ fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("l
              data = df, family= family)
 
   ## look at predictive power of the model
-  if(is.null(datapred)){
+  if(is.null(newdata)){
     N_pred <- NULL
   } else {
     ## Check input data prior predicting
-    list_var <- c("species","site","dataset","effort")
-    if(!all(list_var %in% datapred))
+    list_predvar <- c("species","site","dataset","effort")
+    if(length(intersect(list_predvar, colnames(newdata))) != length(list_predvar))
       stop("variables are missing or data frame headers do not match expected format\n")
 
     cat("\nCompute Abundance Predictions\n=======================\n")
-    N_pred <- stats::predict(mod, newdata = datapred, type = type)
+    N_pred <- stats::predict(mod, newdata = newdata, type = type)
   }
 
   print(summary(mod))
@@ -52,8 +52,8 @@ fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("l
 
 ## function to calculate the median, the first and third quartiles of the Pearsons' correlation coefficients between the estimates obtained by a given approach and "reference" estimates
 fun_pearsons <- function(N_pred, N_ref) {
-  ns <- split(N_pred, tabpr$Species)
-  n <- split(N_ref, tabpr$Species)
+  ns <- split(N_pred, datapred$species)
+  n <- split(N_ref, datapred$species)
   quantile(na.omit(sapply(1:length(ns), function(i) {
     ifelse(sum(ns[[i]]) > 0, cor(ns[[i]], n[[i]]), NA)
   })),
@@ -62,9 +62,9 @@ fun_pearsons <- function(N_pred, N_ref) {
 
 ## function to calculate the median as well as the first and third quartiles of the Bray-Curtis dissimilarity between the estimates obtained by a given approach and  "reference" estimates
 fun_braycurt <- function(N_pred, N_ref) {
-  ns <- lapply(split(N_pred, tabpr$Species), function(x)
+  ns <- lapply(split(N_pred, datapred$species), function(x)
     x / sum(x))
-  n <- lapply(split(N_ref, tabpr$Species), function(x)
+  n <- lapply(split(N_ref, datapred$species), function(x)
     x / sum(x))
   quantile(na.omit(sapply(1:length(ns), function(i) {
     ifelse(sum(ns[[i]]) > 0, sum(abs(ns[[i]] - n[[i]])) / sum(ns[[i]] + n[[i]]), NA)
