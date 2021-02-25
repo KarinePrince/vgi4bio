@@ -4,7 +4,12 @@
 \alias{fun_abund_estim}
 \title{Short Title of the Function (One Line)}
 \usage{
-fun_abund_estim(df, family, datapred = NULL, type = "response")
+fun_abund_estim(
+  df,
+  family = "quasipoisson",
+  datapred = NULL,
+  type = "response"
+)
 }
 \arguments{
 \item{df}{a data.frame containing original species count data. The data.frame should have 5 columns with headers, namely:
