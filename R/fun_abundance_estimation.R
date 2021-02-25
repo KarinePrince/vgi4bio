@@ -36,35 +36,41 @@ fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("l
   if(is.null(datapred)){
     N_pred <- NULL
   } else {
+    ## Check input data prior predicting
+    list_var <- c("species","site","dataset","effort")
+    if(!all(list_var %in% datapred))
+      stop("variables are missing or data frame headers do not match expected format\n")
+
     cat("\nCompute Abundance Predictions\n=======================\n")
     N_pred <- stats::predict(mod, newdata = datapred, type = type)
   }
 
+  print(summary(mod))
   return(list(mod=mod,N_pred=N_pred))
 }
 
 
 ## function to calculate the median, the first and third quartiles of the Pearsons' correlation coefficients between the estimates obtained by a given approach and "reference" estimates
-fun_pearsons <- function(N){
-  ns <- split(N, tabpr$Species)
+fun_pearsons <- function(N_pred, N_ref) {
+  ns <- split(N_pred, tabpr$Species)
   n <- split(N_ref, tabpr$Species)
   quantile(na.omit(sapply(1:length(ns), function(i) {
-    ifelse(sum(ns[[i]])>0, cor(ns[[i]], n[[i]]), NA)
+    ifelse(sum(ns[[i]]) > 0, cor(ns[[i]], n[[i]]), NA)
   })),
-  c(0.25,0.5,0.75))
+  c(0.25, 0.5, 0.75))
 }
 
 ## function to calculate the median as well as the first and third quartiles of the Bray-Curtis dissimilarity between the estimates obtained by a given approach and  "reference" estimates
-fun_braycurt <- function(N){
-  ns <- lapply(split(N, tabpr$Species), function(x) x/sum(x))
-  n <- lapply(split(N_ref, tabpr$Species), function(x) x/sum(x))
-  quantile(na.omit(sapply(1:length(ns), function(i){
-    ifelse(sum(ns[[i]])>0, sum(abs(ns[[i]]-n[[i]]))/sum(ns[[i]]+n[[i]]), NA)
+fun_braycurt <- function(N_pred, N_ref) {
+  ns <- lapply(split(N_pred, tabpr$Species), function(x)
+    x / sum(x))
+  n <- lapply(split(N_ref, tabpr$Species), function(x)
+    x / sum(x))
+  quantile(na.omit(sapply(1:length(ns), function(i) {
+    ifelse(sum(ns[[i]]) > 0, sum(abs(ns[[i]] - n[[i]])) / sum(ns[[i]] + n[[i]]), NA)
   })),
-  c(0.25,0.5,0.75))
+  c(0.25, 0.5, 0.75))
 }
-
-
 
 
 

@@ -62,8 +62,8 @@ df <- rbind(cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_ACT,Effort=A
 #we rename columns to match with expected format of the function
 colnames(df) <- c("species", "site", "N_obs","effort", "dataset")
 
-datapred <- Aquitaine[Aquitaine$Site_in_STOC==1 & Aquitaine$Species_in_ACT==1,]
-datapred <- cbind(datapred[,1:2], Effort=1, Dataset="ACT")
+tabpred <- Aquitaine[Aquitaine$Site_in_STOC==1 & Aquitaine$Species_in_ACT==1,]
+datapred <- cbind(tabpred[,1:2], Effort=1, Dataset="ACT")
 #we rename columns to match with expected format of the function
 library(stringr)
 colnames(datapred) <- str_to_lower(colnames(datapred))
@@ -73,10 +73,31 @@ colnames(datapred) <- str_to_lower(colnames(datapred))
 The function `fun_abund_estim` allows to fit the model.
 
 ```{r}
-fun_abund_estim(df=df, family="quasipoisson", datapred=NULL, type = "response")
+abund.mod <- fun_abund_estim(df=df, family="quasipoisson", newdata=NULL, type = "response")
+abund.mod
 ```
 
 
 
-
 ## Assess predictive power of the model
+
+If _newdata_ is provided, the function `fun_abund_estim` allows to estimate the predicted values, and further assess the predictive power of the model.
+
+```{r}
+abund.predmod <- fun_abund_estim(df=df, family="quasipoisson", newdata=datapred, type = "response")
+```
+
+We then use _fun_pearsons_ et _fun_braycurt_ to calculate Pearsons and Bray-Curtis statistic values to compare predicted (*N_pred*) and estimates from other estimaton approaches (*N_ref*).
+
+```{r}
+#estimate species abundance species with another approach
+N_STOC <- tabpred$X_STOC/tabpred$Effort_STOC
+
+#calculate Pearsons statistics
+pearson.stat <- fun_pearsons(N_pred=N_pred, N_ref=N_STOC)
+
+#calculate Bray_curtis statistics
+braycurt.stat <- fun_braycurt(N_pred=N_pred, N_ref=N_STOC)
+
+```
+
