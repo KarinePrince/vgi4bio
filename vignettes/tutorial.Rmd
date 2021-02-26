@@ -1,5 +1,5 @@
 ---
-title: "Tutorial"
+title: "Combined analysis of opportunistic and standardized dataset to estimate relative abundances of multiple species, and habitat preferences"
 author: "Karine Princé"
 date: "`r Sys.Date()`"
 output: 
@@ -9,7 +9,7 @@ output:
 bibliography: references.bib
 link-citations: true
 vignette: |
-  %\VignetteIndexEntry{tutorial}
+  %\VignetteIndexEntry{Combined analysis of opportunistic and standardized dataset to estimate relative abundances of multiple species, and habitat preferences}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,7 +23,7 @@ The package `vgi4bio` contains functions for the combined analysis of opportunis
   
 
 
-## The Aquitaine data set
+# The Aquitaine data set
 
 The Aquitaine dataset is used to illustrate sevral methods. It is stored as a list and contains the data used to develop the models in @Giraud2015 and @Coron2018. 
 
@@ -45,7 +45,7 @@ The data.frame Aquitaine contains the following variables (for a complete list o
 *X\_LPO*: the abundance of the species stored in the variable *Species* detected in the site stored in the variable *Site* by the opportunistic LPO program;
 
 
-## Calculate the relative density
+# Calculate the relative density
 
 In this example, we consider the case of the model combining the 'complete' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see @Giraud2015.
 
@@ -75,7 +75,7 @@ summary(abund.mod$mod)
 ```
 
 
-## Assess the predictive power of the model
+# Assess the predictive power of the model
 
 If `newdata` is provided, the function `fun_abund_estim` allows to estimate the predicted values, and further assess the predictive power of the model.
 

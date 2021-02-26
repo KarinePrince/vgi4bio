@@ -2,7 +2,7 @@
 title: "README"
 author: "Karine Princé"
 date: "12/11/2020"
-output: html_document
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## vgi4bio
+# vgi4bio
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/KarinePrince/vgi4bio.svg?branch=master)](https://travis-ci.com/KarinePrince/vgi4bio)
@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 The package of vgi4bio contains functions to estimate relative species abundances from opportunistic records, using data combination methods.
 To have an overview of the package, read the vignette after installing the package by:
 
-``` {r}
+``` {r, eval=F}
 vignette("tutorial", package = "vgi4bio")
 ```
 
@@ -44,47 +44,22 @@ To install the development version from GitHub:
 
 Then:
 
-``` {r}
+``` {r, eval=F}
 library(devtools)
 install_github("KarinePrince/vgi4bio")
 ```
 
 The stable version can be installed from [CRAN](https://CRAN.R-project.org) using:
 
-``` {r}
+``` {r, eval=F}
 install.packages("vgi4bio")
 ```
   
 Once installed, the package can be loaded using:  
 
-``` {r}
+``` {r, eval=F}
 library(vgi4bio)
 ```
 
 *Note that this package was build with R 3.6, so you might have to update your R installation.*
 
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(vgi4bio)
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
