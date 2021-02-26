@@ -20,12 +20,20 @@
 #' @export
 fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("link", "response", "terms")){
 
-  ## Check input data prior modeling
+  ## Check input data and parameters prior modeling
   list_var <- c("species","site","N_obs","dataset","effort")
   if(length(intersect(list_var, colnames(df))) != length(list_var))
-    stop("variables are missing or data frame headers do not match expected format\n")
-  if (any(is.na(df$N_obs)))
-    stop("Observation variable contain 'NA' values\n")
+    stop("ERROR: variables are missing or data frame headers do not match expected format\n")
+
+  if(any(is.na(df$N_obs)))
+    stop("ERROR: Observation variable contain 'NA' values\n")
+
+  is.not.null <- function(x) !is.null(x)
+  if(is.not.null(newdata) & is.null(type))
+    stop("ERROR: type has to be specified if newdata is provided. type can be 'link', 'reponse' or 'terms'")
+
+  if(!(family %in% c("quasipoisson","poisson")))
+    stop("ERROR: family has to be 'poisson' or 'quasipoisson' (the function is under development to further run with other types of error distribution)")
 
   ## run model
   cat("\nRun Abundance Model\n=======================\n")
@@ -51,9 +59,11 @@ fun_abund_estim <- function(df, family="quasipoisson", newdata=NULL, type = c("l
 
 
 ## function to calculate the median, the first and third quartiles of the Pearsons' correlation coefficients between the estimates obtained by a given approach and "reference" estimates
-fun_pearsons <- function(N_pred, N_ref) {
-  ns <- split(N_pred, datapred$species)
-  n <- split(N_ref, datapred$species)
+fun_pearsons <- function(N_pred, N_ref, newdata=newdata) {
+  if(is.null(newdata))
+    stop("ERROR: same newdata has to be provided as in 'fun_abund_estim' function")
+  ns <- split(N_pred, newdata$species)
+  n <- split(N_ref, newdata$species)
   quantile(na.omit(sapply(1:length(ns), function(i) {
     ifelse(sum(ns[[i]]) > 0, cor(ns[[i]], n[[i]]), NA)
   })),
@@ -62,9 +72,9 @@ fun_pearsons <- function(N_pred, N_ref) {
 
 ## function to calculate the median as well as the first and third quartiles of the Bray-Curtis dissimilarity between the estimates obtained by a given approach and  "reference" estimates
 fun_braycurt <- function(N_pred, N_ref) {
-  ns <- lapply(split(N_pred, datapred$species), function(x)
+  ns <- lapply(split(N_pred, newdata$species), function(x)
     x / sum(x))
-  n <- lapply(split(N_ref, datapred$species), function(x)
+  n <- lapply(split(N_ref, newdata$species), function(x)
     x / sum(x))
   quantile(na.omit(sapply(1:length(ns), function(i) {
     ifelse(sum(ns[[i]]) > 0, sum(abs(ns[[i]] - n[[i]])) / sum(ns[[i]] + n[[i]]), NA)
