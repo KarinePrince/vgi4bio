@@ -25,7 +25,7 @@ The package `vgi4bio` contains functions for the combined analysis of opportunis
 
 # The Aquitaine data set
 
-The Aquitaine dataset is used to illustrate several methods. It is stored as a list and contains the data used to develop the models in @Giraud2015 and @Coron2018. 
+The Aquitaine dataset is used to illustrate several methods. It is stored as a data.frame and contains the data used to develop the models in @Giraud2015 and @Coron2018. 
 
 ```{r, eval=F}
 library(vgi4bio)
@@ -48,13 +48,11 @@ The data.frame Aquitaine contains the following variables (for a complete list o
 *X\_LPO*: the abundance of the species stored in the variable *Species* detected in the site stored in the variable *Site* by the opportunistic LPO program;
 
 
-# Calculate the relative density
+# Fit the combination model
 
-In this example, we consider the case of the model combining the 'complete' ACT dataset (standardized data) and the LPO dataset (opportunistic data). For other examples of data combinations, see @Giraud2015.
+In this example, we consider the model combining the 'complete' ACT dataset (standardized data, known sampling effort) and the LPO dataset (opportunistic data, unknown sampling effort), as in @Giraud2015. For other combinations of data, see @Giraud2015.
 
-First, we format the data for the fit.
-
-Only the species monitored by ACT (`Species_in_ACT == 1`) contribute ACT counts: for the other species, the zeros in `X_ACT` mean "not recorded", not "absent", and must be left out.
+First, we format the data for the fit. Only the species monitored by ACT (`Species_in_ACT == 1`) contribute ACT counts: for the other species, the zeros in `X_ACT` mean "not recorded", not "absent", and must be left out.
 
 ```{r, eval=F}
 inACT <- Aquitaine$Species_in_ACT == 1
@@ -64,48 +62,57 @@ df <- rbind(
              dataset = "ACT"),
   data.frame(species = Aquitaine$Species, site = Aquitaine$Site,
              N_obs = Aquitaine$X_LPO, effort = 1, dataset = "LPO"))
-
-# sites also surveyed by STOC, for species monitored by ACT: used to assess predictions
-tabpred <- Aquitaine[Aquitaine$Site_in_STOC == 1 & inACT, ]
-datapred <- data.frame(species = tabpred$Species, site = tabpred$Site,
-                       effort = 1, dataset = "ACT")
 ```
 
-The function `fun_abund_estim` allows to fit the model.
+The function `fun_abund_estim()` fits the model. The argument `standardized` gives the dataset whose sampling effort is known: its site effects are fixed by the `effort` offset, while the site effects of the opportunistic dataset are estimated. Fitting the model on the full data set takes a few minutes (one parameter per species x site combination).
 
 ```{r, eval=F}
-abund.mod <- fun_abund_estim(df = df, family = "quasipoisson")
-#check the model summary 
+abund.mod <- fun_abund_estim(df = df, standardized = "ACT", family = "quasipoisson")
+# model summary
 summary(abund.mod$mod)
 ```
 
+# Extract the relative abundances
 
-# Assess the predictive power of the model
-
-If `newdata` is provided, the function `fun_abund_estim` allows to estimate the predicted values, and further assess the predictive power of the model.
+The function `fun_rel_abund()` extracts the relative abundance of each species on each site, with confidence intervals. Abundances are only identifiable up to a species-specific constant: by default (`scale = "sum"`), they are rescaled to sum to one across sites for each species. This is available for all species, including the 21 species recorded only by the LPO.
 
 ```{r, eval=F}
-abund.predmod <- fun_abund_estim(df=df, family="quasipoisson", newdata=datapred, type = "response")
-#check the model summary 
-summary(abund.predmod$mod)
-#check the first predicted values
-head(abund.predmod$N_pred)
+ra <- fun_rel_abund(abund.mod)
+head(ra)
+# the 5 sites with the highest relative abundance of the blackbird
+tm <- ra[ra$species == "TURMER", ]
+head(tm[order(-tm$rel_abund), ], 5)
 ```
 
-Note that fitting the model on the full data set takes a few minutes (one parameter per species x site combination).
+With `scale = "none"`, the abundances are expressed as expected counts per unit of effort of the standardized dataset (here, per ACT point-count-year). This scale is only defined for the species monitored by ACT.
 
-We then use `fun_pearsons()` and `fun_braycurt()` to calculate Pearsons and Bray-Curtis statistic values to compare predicted estimates (*N_pred*) and estimates from other estimation approaches (*N_ref*).
-
-```{r,eval=F}
-#estimate species abundance species with another approach
-N_STOC <- tabpred$X_STOC/tabpred$Effort_STOC
-
-#calculate Pearsons statistics
-pearson.stat <- fun_pearsons(N_pred = abund.predmod$N_pred, N_ref = N_STOC, newdata = datapred)
-
-#calculate Bray_curtis statistics
-braycurt.stat <- fun_braycurt(N_pred = abund.predmod$N_pred, N_ref = N_STOC, newdata = datapred)
-      
+```{r, eval=F}
+ra_act <- fun_rel_abund(abund.mod, scale = "none")
 ```
+
+# Assess the model against an independent reference
+
+The STOC programme surveyed 24 of the 63 sites and was not used for the fit: it provides an independent reference. We use `fun_pearsons()` and `fun_braycurt()` to compare, species by species, the estimated relative abundances with the STOC abundances (*N_ref*), on these 24 sites.
+
+```{r, eval=F}
+ref <- Aquitaine[Aquitaine$Site_in_STOC == 1, ]
+ref$N_ref <- ref$X_STOC / ref$Effort_STOC
+m <- merge(ra, ref[, c("Species", "Site", "N_ref")],
+           by.x = c("species", "site"), by.y = c("Species", "Site"))
+
+# species monitored by ACT
+act <- m[m$in_standardized, ]
+fun_pearsons(N_pred = act$rel_abund, N_ref = act$N_ref, newdata = act)
+fun_braycurt(N_pred = act$rel_abund, N_ref = act$N_ref, newdata = act)
+
+# species recorded only by LPO
+lpo <- m[!m$in_standardized, ]
+fun_pearsons(N_pred = lpo$rel_abund, N_ref = lpo$N_ref, newdata = lpo)
+fun_braycurt(N_pred = lpo$rel_abund, N_ref = lpo$N_ref, newdata = lpo)
+```
+
+The median (first and third quartiles) Pearson correlation is 0.55 (0.38–0.68) for the 13 species monitored by ACT and 0.35 (0.19–0.47) for the 21 other species, as reported in Table 2 of @Giraud2015.
+
+Replacing the complete ACT data by the reduced dataset `X_ACTred` (one point-count-year per site, so `effort = 1`) gives 0.54 (0.25–0.61) and 0.28 (0.08–0.40), also as in @Giraud2015.
 
 # References

@@ -8,8 +8,18 @@
 #' \deqn{\log E(N_{ijk}) = \log(\mathrm{effort}_{jk}) + (species \times site)_{ij}
 #'   + (species \times dataset)_{ik} + (site \times dataset)_{jk}.}
 #' The `species:site` terms carry the relative abundances; the
-#' `species:dataset` and `site:dataset` terms absorb the detection
-#' probabilities and the unknown sampling effort of the opportunistic data.
+#' `species:dataset` terms absorb the species detection probabilities in each
+#' dataset, and the `site:dataset` terms the unknown sampling effort of the
+#' opportunistic dataset(s).
+#'
+#' Identifiability requires the site effects of the standardized dataset to
+#' be known (through `effort`): the `site:dataset` terms are therefore fixed
+#' to zero for the dataset given in `standardized`, which is set as the
+#' reference level of `dataset`. Several opportunistic datasets can be
+#' combined; only one standardized dataset is currently supported.
+#'
+#' Use [fun_rel_abund()] on the result to extract the relative abundances of
+#' each species on each site.
 #'
 #' @param df A data.frame of observed counts with (at least) the columns:
 #'   * `species`: name or code of the species;
@@ -24,6 +34,10 @@
 #'   zeros for a species a programme does not record are structural zeros,
 #'   not absences (a warning is issued if a species has only zeros in a
 #'   dataset).
+#' @param standardized Name of the standardized dataset (the value of
+#'   `dataset` whose sampling effort is known), e.g. `"ACT"`. If `NULL`
+#'   (default), the first level of `dataset` is used, with a warning: always
+#'   set it explicitly.
 #' @param family Error distribution of the GLM: `"quasipoisson"` (default) or
 #'   `"poisson"`.
 #' @param newdata Optional data.frame with columns `species`, `site`,
@@ -34,10 +48,11 @@
 #' @param verbose If `TRUE`, prints progress messages and the model summary.
 #'   Default `FALSE`.
 #'
-#' @return A list with two elements:
+#' @return A list with three elements:
 #'   * `mod`: the fitted `glm` object;
 #'   * `N_pred`: the predictions for `newdata`, or `NULL` if `newdata` is
-#'     not provided.
+#'     not provided;
+#'   * `standardized`: the name of the standardized dataset.
 #'
 #' @references
 #' Giraud C., Calenge C., Coron C. & Julliard R. (2016). Capitalizing on
@@ -45,8 +60,8 @@
 #' *Biometrics*, 72(2), 649-658. \doi{10.1111/biom.12431}
 #'
 #' @author Karine Princé
-#' @seealso [fun_pearsons()], [fun_braycurt()], `vignette("tutorial", package = "vgi4bio")`
-#' @importFrom stats glm predict
+#' @seealso [fun_rel_abund()], [fun_pearsons()], [fun_braycurt()], `vignette("tutorial", package = "vgi4bio")`
+#' @importFrom stats glm predict relevel
 #' @export
 #'
 #' @examples
@@ -61,11 +76,13 @@
 #'              effort = aq$Effort_ACT, dataset = "ACT"),
 #'   data.frame(species = aq$Species, site = aq$Site, N_obs = aq$X_LPO,
 #'              effort = 1, dataset = "LPO"))
-#' res <- fun_abund_estim(df, family = "quasipoisson",
+#' res <- fun_abund_estim(df, standardized = "ACT", family = "quasipoisson",
 #'                        newdata = transform(df[df$dataset == "ACT", ], effort = 1),
 #'                        type = "response")
 #' head(res$N_pred)
-fun_abund_estim <- function(df, family = c("quasipoisson", "poisson"),
+#' head(fun_rel_abund(res))
+fun_abund_estim <- function(df, standardized = NULL,
+                            family = c("quasipoisson", "poisson"),
                             newdata = NULL,
                             type = c("link", "response", "terms"),
                             verbose = FALSE) {
@@ -96,6 +113,22 @@ fun_abund_estim <- function(df, family = c("quasipoisson", "poisson"),
   df$site <- as.factor(df$site)
   df$dataset <- as.factor(df$dataset)
 
+  ## Standardized dataset = reference level of 'dataset', so that its
+  ## site:dataset terms are fixed to 0 (known effort, through the offset)
+  if (is.null(standardized)) {
+    standardized <- levels(df$dataset)[1]
+    if (nlevels(df$dataset) > 1)
+      warning("'standardized' not given: assuming '", standardized,
+              "' is the standardized dataset (known effort). Set 'standardized' explicitly.",
+              call. = FALSE)
+  }
+  if (length(standardized) != 1)
+    stop("Only one standardized dataset is currently supported.", call. = FALSE)
+  if (!standardized %in% levels(df$dataset))
+    stop("'standardized' (", standardized, ") is not a value of 'dataset'.",
+         call. = FALSE)
+  df$dataset <- stats::relevel(df$dataset, ref = standardized)
+
   ## Species never observed in a dataset: probably not monitored by it
   ## (structural zeros), which makes the species:dataset estimates diverge.
   tot <- tapply(df$N_obs, list(df$species, df$dataset), sum)
@@ -124,11 +157,12 @@ fun_abund_estim <- function(df, family = c("quasipoisson", "poisson"),
       stop("Missing column(s) in 'newdata': ", paste(missing_pred, collapse = ", "),
            call. = FALSE)
     if (verbose) message("Computing predictions...")
+    newdata$dataset <- factor(newdata$dataset, levels = levels(df$dataset))
     N_pred <- stats::predict(mod, newdata = newdata, type = type)
   }
 
   if (verbose) print(summary(mod))
-  list(mod = mod, N_pred = N_pred)
+  list(mod = mod, N_pred = N_pred, standardized = standardized)
 }
 
 

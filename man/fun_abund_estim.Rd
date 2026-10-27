@@ -7,6 +7,7 @@ opportunistic data}
 \usage{
 fun_abund_estim(
   df,
+  standardized = NULL,
   family = c("quasipoisson", "poisson"),
   newdata = NULL,
   type = c("link", "response", "terms"),
@@ -30,6 +31,11 @@ zeros for a species a programme does not record are structural zeros,
 not absences (a warning is issued if a species has only zeros in a
 dataset).}
 
+\item{standardized}{Name of the standardized dataset (the value of
+\code{dataset} whose sampling effort is known), e.g. \code{"ACT"}. If \code{NULL}
+(default), the first level of \code{dataset} is used, with a warning: always
+set it explicitly.}
+
 \item{family}{Error distribution of the GLM: \code{"quasipoisson"} (default) or
 \code{"poisson"}.}
 
@@ -44,11 +50,12 @@ dataset).}
 Default \code{FALSE}.}
 }
 \value{
-A list with two elements:
+A list with three elements:
 \itemize{
 \item \code{mod}: the fitted \code{glm} object;
 \item \code{N_pred}: the predictions for \code{newdata}, or \code{NULL} if \code{newdata} is
-not provided.
+not provided;
+\item \code{standardized}: the name of the standardized dataset.
 }
 }
 \description{
@@ -58,8 +65,18 @@ quasi-Poisson) GLM in which the expected count of species \eqn{i} at site
 \deqn{\log E(N_{ijk}) = \log(\mathrm{effort}_{jk}) + (species \times site)_{ij}
   + (species \times dataset)_{ik} + (site \times dataset)_{jk}.}
 The \code{species:site} terms carry the relative abundances; the
-\code{species:dataset} and \code{site:dataset} terms absorb the detection
-probabilities and the unknown sampling effort of the opportunistic data.
+\code{species:dataset} terms absorb the species detection probabilities in each
+dataset, and the \code{site:dataset} terms the unknown sampling effort of the
+opportunistic dataset(s).
+
+Identifiability requires the site effects of the standardized dataset to
+be known (through \code{effort}): the \code{site:dataset} terms are therefore fixed
+to zero for the dataset given in \code{standardized}, which is set as the
+reference level of \code{dataset}. Several opportunistic datasets can be
+combined; only one standardized dataset is currently supported.
+
+Use \code{\link[=fun_rel_abund]{fun_rel_abund()}} on the result to extract the relative abundances of
+each species on each site.
 }
 \examples{
 data(Aquitaine)
@@ -73,10 +90,11 @@ df <- rbind(
              effort = aq$Effort_ACT, dataset = "ACT"),
   data.frame(species = aq$Species, site = aq$Site, N_obs = aq$X_LPO,
              effort = 1, dataset = "LPO"))
-res <- fun_abund_estim(df, family = "quasipoisson",
+res <- fun_abund_estim(df, standardized = "ACT", family = "quasipoisson",
                        newdata = transform(df[df$dataset == "ACT", ], effort = 1),
                        type = "response")
 head(res$N_pred)
+head(fun_rel_abund(res))
 }
 \references{
 Giraud C., Calenge C., Coron C. & Julliard R. (2016). Capitalizing on
@@ -84,7 +102,7 @@ opportunistic data for monitoring relative abundances of species.
 \emph{Biometrics}, 72(2), 649-658. \doi{10.1111/biom.12431}
 }
 \seealso{
-\code{\link[=fun_pearsons]{fun_pearsons()}}, \code{\link[=fun_braycurt]{fun_braycurt()}}, \code{vignette("tutorial", package = "vgi4bio")}
+\code{\link[=fun_rel_abund]{fun_rel_abund()}}, \code{\link[=fun_pearsons]{fun_pearsons()}}, \code{\link[=fun_braycurt]{fun_braycurt()}}, \code{vignette("tutorial", package = "vgi4bio")}
 }
 \author{
 Karine Princé
