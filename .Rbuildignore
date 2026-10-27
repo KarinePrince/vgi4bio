@@ -9,3 +9,7 @@
 ^docs$
 ^pkgdown$
 ^README\.html$
+(^|/)\._
+(^|/)\.DS_Store$
+^\.github$
+^\.Rhistory$

@@ -2,35 +2,89 @@
 % Please edit documentation in R/fun_abundance_estimation.R
 \name{fun_abund_estim}
 \alias{fun_abund_estim}
-\title{Short Title of the Function (One Line)}
+\title{Estimate relative species abundances by combining standardized and
+opportunistic data}
 \usage{
 fun_abund_estim(
   df,
-  family = "quasipoisson",
+  family = c("quasipoisson", "poisson"),
   newdata = NULL,
-  type = c("link", "response", "terms")
+  type = c("link", "response", "terms"),
+  verbose = FALSE
 )
 }
 \arguments{
-\item{df}{a data.frame containing original species count data. The data.frame should contain 5 columns with the following headers:
-"species": the variable that stores the name/code of the species,
-"site": the variable that stores the observation sites,
-"dataset": the variable that stores the dataset (e.g. monitoring program) to which the observation data are associated
-"effort": a measure of effort that depends on the monitoring program (for example, it can be set to the number of survey points-years implemented in the standardardized program for the site stored in the variable Site)
-"N_obs": the observed abundance/count of each \emph{species} detected at each \emph{site};
-@param family string setting the distribution of the error term in the GLM, default='quasipoisson', but can be 'poisson'.
-@param newdata an optional data frame in which to look for variables with which to predict and assess the predictive power of the model. Default is NULL. Is newdata is not provided, predicted values are not computed.
-@type the type of prediction required. The default is on the scale of the linear predictors; the alternative "response" is on the scale of the response variable. Thus for a quasipoisson poisson model the default predictions are of log-odds (probabilities on log scale) and type = "response" gives the predicted probabilities. The "terms" option returns a matrix giving the fitted values of each term in the model formula on the linear predictor scale.}
+\item{df}{A data.frame of observed counts with (at least) the columns:
+\itemize{
+\item \code{species}: name or code of the species;
+\item \code{site}: identifier of the observation site;
+\item \code{dataset}: dataset (e.g. monitoring programme) the count comes from;
+\item \code{effort}: sampling effort, strictly positive (e.g. number of
+point-count-years of the standardized programme at the site; set to 1
+for opportunistic data whose effort is unknown);
+\item \code{N_obs}: observed count of \code{species} at \code{site} in \code{dataset}.
+}
+
+Only include, for each dataset, the species actually monitored by it:
+zeros for a species a programme does not record are structural zeros,
+not absences (a warning is issued if a species has only zeros in a
+dataset).}
+
+\item{family}{Error distribution of the GLM: \code{"quasipoisson"} (default) or
+\code{"poisson"}.}
+
+\item{newdata}{Optional data.frame with columns \code{species}, \code{site},
+\code{dataset} and \code{effort} for which predictions are computed. If \code{NULL}
+(default), no prediction is made.}
+
+\item{type}{Type of prediction, passed to \code{\link[stats:predict.glm]{stats::predict.glm()}}: \code{"link"}
+(default, log scale), \code{"response"} (count scale) or \code{"terms"}.}
+
+\item{verbose}{If \code{TRUE}, prints progress messages and the model summary.
+Default \code{FALSE}.}
+}
+\value{
+A list with two elements:
+\itemize{
+\item \code{mod}: the fitted \code{glm} object;
+\item \code{N_pred}: the predictions for \code{newdata}, or \code{NULL} if \code{newdata} is
+not provided.
+}
 }
 \description{
-estimation of abundance based on opportunistic survey data combined to standardized data
+Fits the data-combination model of Giraud et al. (2016): a Poisson (or
+quasi-Poisson) GLM in which the expected count of species \eqn{i} at site
+\eqn{j} in dataset \eqn{k} is
+\deqn{\log E(N_{ijk}) = \log(\mathrm{effort}_{jk}) + (species \times site)_{ij}
+  + (species \times dataset)_{ik} + (site \times dataset)_{jk}.}
+The \code{species:site} terms carry the relative abundances; the
+\code{species:dataset} and \code{site:dataset} terms absorb the detection
+probabilities and the unknown sampling effort of the opportunistic data.
 }
 \examples{
-see the vignette("tutorial") for some examples
-
+data(Aquitaine)
+# small subset to keep the example fast
+# 4 species monitored by both programmes, 15 sites
+sp <- c("ALAARV", "COLPAL", "TURMER", "STRDEC")
+st <- levels(Aquitaine$Site)[1:15]
+aq <- droplevels(Aquitaine[Aquitaine$Species \%in\% sp & Aquitaine$Site \%in\% st, ])
+df <- rbind(
+  data.frame(species = aq$Species, site = aq$Site, N_obs = aq$X_ACT,
+             effort = aq$Effort_ACT, dataset = "ACT"),
+  data.frame(species = aq$Species, site = aq$Site, N_obs = aq$X_LPO,
+             effort = 1, dataset = "LPO"))
+res <- fun_abund_estim(df, family = "quasipoisson",
+                       newdata = transform(df[df$dataset == "ACT", ], effort = 1),
+                       type = "response")
+head(res$N_pred)
 }
 \references{
-
+Giraud C., Calenge C., Coron C. & Julliard R. (2016). Capitalizing on
+opportunistic data for monitoring relative abundances of species.
+\emph{Biometrics}, 72(2), 649-658. \doi{10.1111/biom.12431}
+}
+\seealso{
+\code{\link[=fun_pearsons]{fun_pearsons()}}, \code{\link[=fun_braycurt]{fun_braycurt()}}, \code{vignette("tutorial", package = "vgi4bio")}
 }
 \author{
 Karine Princé

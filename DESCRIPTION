@@ -1,22 +1,32 @@
 Package: vgi4bio
 Title: Capitalizing on Opportunistic Data for Monitoring Relative Abundances of Species
-Version: 0.0.0.9000
-Authors@R: 
+Version: 0.0.0.9001
+Authors@R:
     person(given = "Karine",
            family = "Princé",
            role = c("aut", "cre"),
            email = "karine.prince@mnhn.fr",
            comment = c(ORCID = "0000-0001-7739-7438"))
-Description: Functions, data sets and examples to estimate relative species abundances and their respective preferences for different habitat types, using opportunistic
-data. The development of the statistical models behind the package is described in [Coron et al. 2017]<https: //doi.org/10.1007/s10651-018-0398-2>.
+Description: Functions, data sets and examples to estimate relative species
+    abundances and their respective preferences for different habitat types,
+    using opportunistic data combined with standardized monitoring data. The
+    statistical models are described in Giraud et al. (2016)
+    <doi:10.1111/biom.12431> and Coron et al. (2018)
+    <doi:10.1007/s10651-018-0398-2>.
+URL: https://github.com/KarinePrince/vgi4bio
 BugReports: https://github.com/KarinePrince/vgi4bio/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
-Suggests: 
-    testthat,
+Depends:
+    R (>= 3.5.0)
+Imports:
+    stats
+Suggests:
+    testthat (>= 3.0.0),
     knitr,
     rmarkdown
+Config/testthat/edition: 3
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1

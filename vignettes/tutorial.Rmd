@@ -25,9 +25,10 @@ The package `vgi4bio` contains functions for the combined analysis of opportunis
 
 # The Aquitaine data set
 
-The Aquitaine dataset is used to illustrate sevral methods. It is stored as a list and contains the data used to develop the models in @Giraud2015 and @Coron2018. 
+The Aquitaine dataset is used to illustrate several methods. It is stored as a list and contains the data used to develop the models in @Giraud2015 and @Coron2018. 
 
 ```{r, eval=F}
+library(vgi4bio)
 data(Aquitaine)
 ```
 
@@ -36,6 +37,8 @@ The data.frame Aquitaine contains the following variables (for a complete list o
 *Species*: this variable stores the code of the bird species. This code is formed by concatenating the first three letters of the genus and the first three letters of the species (see the first column of Table 1 in the main text);  
 
 *Site*: this variable stores the code of the 63 ACT sites used for the model fit;  
+
+*Species\_in\_ACT*: 1 if the species is monitored by the ACT programme, 0 otherwise (for these species, *X\_ACT* is a structural zero, not an absence);
 
 *Effort\_ACT*: the number of listening points-years implemented in the ACT program for the site stored in the variable *Site*;  
 
@@ -51,25 +54,27 @@ In this example, we consider the case of the model combining the 'complete' ACT 
 
 First, we format the data for the fit.
 
+Only the species monitored by ACT (`Species_in_ACT == 1`) contribute ACT counts: for the other species, the zeros in `X_ACT` mean "not recorded", not "absent", and must be left out.
+
 ```{r, eval=F}
-data(Aquitaine)
-df <- rbind(cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_ACT,Effort=Aquitaine$Effort_ACT,Dataset="ACT"),
-                cbind(Aquitaine[,c("Species","Site")],N_obs=Aquitaine$X_LPO,Effort=1,Dataset="LPO"))
-#we rename columns to match with expected format of the function
-colnames(df) <- c("species", "site", "N_obs","effort", "dataset")
+inACT <- Aquitaine$Species_in_ACT == 1
+df <- rbind(
+  data.frame(species = Aquitaine$Species[inACT], site = Aquitaine$Site[inACT],
+             N_obs = Aquitaine$X_ACT[inACT], effort = Aquitaine$Effort_ACT[inACT],
+             dataset = "ACT"),
+  data.frame(species = Aquitaine$Species, site = Aquitaine$Site,
+             N_obs = Aquitaine$X_LPO, effort = 1, dataset = "LPO"))
 
-tabpred <- Aquitaine[Aquitaine$Site_in_STOC==1 & Aquitaine$Species_in_ACT==1,]
-datapred <- cbind(tabpred[,1:2], Effort=1, Dataset="ACT")
-#we rename columns to match with expected format of the function
-library(stringr)
-colnames(datapred) <- str_to_lower(colnames(datapred))
-
+# sites also surveyed by STOC, for species monitored by ACT: used to assess predictions
+tabpred <- Aquitaine[Aquitaine$Site_in_STOC == 1 & inACT, ]
+datapred <- data.frame(species = tabpred$Species, site = tabpred$Site,
+                       effort = 1, dataset = "ACT")
 ```
 
 The function `fun_abund_estim` allows to fit the model.
 
 ```{r, eval=F}
-abund.mod <- fun_abund_estim(df=df, family="quasipoisson", newdata=NULL, type = "response")
+abund.mod <- fun_abund_estim(df = df, family = "quasipoisson")
 #check the model summary 
 summary(abund.mod$mod)
 ```
@@ -87,17 +92,20 @@ summary(abund.predmod$mod)
 head(abund.predmod$N_pred)
 ```
 
-We then use 'fun_pearsons' et 'fun_braycurt' to calculate Pearsons and Bray-Curtis statistic values to compare predicted estimates (*N_pred*) and estimates from other estimaton approaches (*N_ref*).
+Note that fitting the model on the full data set takes a few minutes (one parameter per species x site combination).
+
+We then use `fun_pearsons()` and `fun_braycurt()` to calculate Pearsons and Bray-Curtis statistic values to compare predicted estimates (*N_pred*) and estimates from other estimation approaches (*N_ref*).
 
 ```{r,eval=F}
 #estimate species abundance species with another approach
 N_STOC <- tabpred$X_STOC/tabpred$Effort_STOC
 
 #calculate Pearsons statistics
-pearson.stat <- fun_pearsons(N_pred=abund.predmod$N_pred, N_ref=N_STOC)
+pearson.stat <- fun_pearsons(N_pred = abund.predmod$N_pred, N_ref = N_STOC, newdata = datapred)
 
 #calculate Bray_curtis statistics
-braycurt.stat <- fun_braycurt(N_pred=abund.predmod$N_pred, N_ref=N_STOC)
+braycurt.stat <- fun_braycurt(N_pred = abund.predmod$N_pred, N_ref = N_STOC, newdata = datapred)
       
 ```
 
+# References

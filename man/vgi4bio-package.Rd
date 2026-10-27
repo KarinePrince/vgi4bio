@@ -6,17 +6,18 @@
 \alias{vgi4bio-package}
 \title{vgi4bio: Capitalizing on Opportunistic Data for Monitoring Relative Abundances of Species}
 \description{
-Functions, data sets and examples to estimate relative species abundances and their respective preferences for different habitat types, using opportunistic
+Functions, data sets and examples to estimate relative species abundances and their respective preferences for different habitat types, using opportunistic data combined with standardized monitoring data. The statistical models are described in Giraud et al. (2016) \doi{10.1111/biom.12431} and Coron et al. (2018) \doi{10.1007/s10651-018-0398-2}.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://github.com/KarinePrince/vgi4bio}
   \item Report bugs at \url{https://github.com/KarinePrince/vgi4bio/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Karine Princé \email{karine.prince@mnhn.fr} (\href{https://orcid.org/0000-0001-7739-7438}{ORCID})
+\strong{Maintainer}: Karine Princ<c3><a9> \email{karine.prince@mnhn.fr} (\href{https://orcid.org/0000-0001-7739-7438}{ORCID})
 
 }
 \keyword{internal}
