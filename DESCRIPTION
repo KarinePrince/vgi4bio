@@ -1,6 +1,6 @@
 Package: vgi4bio
 Title: Capitalizing on Opportunistic Data for Monitoring Relative Abundances of Species
-Version: 0.0.0.9003
+Version: 0.1.0
 Authors@R:
     person(given = "Karine",
            family = "Princé",
