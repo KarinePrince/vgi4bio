@@ -1,6 +1,6 @@
 Package: vgi4bio
 Title: Capitalizing on Opportunistic Data for Monitoring Relative Abundances of Species
-Version: 0.0.0.9002
+Version: 0.0.0.9003
 Authors@R:
     person(given = "Karine",
            family = "Princé",
@@ -23,9 +23,16 @@ Depends:
 Imports:
     stats
 Suggests:
+    rjags,
+    coda,
+    nimble (>= 1.4.0),
+    nimbleHMC,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown
+SystemRequirements: JAGS (>= 4.0.0, https://mcmc-jags.sourceforge.io),
+    optional, for fun_abund_hab_estim(engine = "jags"); a C++ compiler for
+    fun_abund_hab_estim(engine = "nimble_hmc")
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

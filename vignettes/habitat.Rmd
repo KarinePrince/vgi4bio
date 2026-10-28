@@ -1,0 +1,101 @@
+---
+title: "Relative abundances and habitat preferences: the Bayesian model of Coron et al. (2018)"
+author: "Karine Princé"
+date: "`r Sys.Date()`"
+output:
+  html_vignette:
+    number_sections: yes
+    toc: yes
+bibliography: references.bib
+link-citations: true
+vignette: |
+  %\VignetteIndexEntry{Relative abundances and habitat preferences (Coron et al. 2018)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+The model of @Giraud2015 (see `vignette("tutorial")`) assumes that, within a site, species and observers are distributed independently of the habitat. @Coron2018 relax this assumption: each species $i$ selects the habitat $h$ with intensity $S_{ih}$, and the observers of each dataset $k$ prefer habitat $h$ with intensity $q_{hk}$. The data are described at the level of *cells* (listening points, communes, ...) nested in *sites*, with the area of each habitat in each cell. The model is fitted in a Bayesian framework by MCMC.
+
+The code chunks of this vignette are not run when the vignette is built, because the MCMC takes from a few seconds to several hours.
+
+# Data format
+
+Two data.frames are needed:
+
+* `obs`: one row per species x cell x dataset, with the columns `species`, `cell`, `dataset` and `count`. A species is considered as monitored by a dataset when it has at least one row for this dataset; missing cells are then filled with zero counts. All the species must be monitored by the opportunistic dataset;
+* `cells`: one row per cell x dataset, with the columns `cell`, `dataset`, `site`, `effort` (known effort of the standardized dataset, e.g. number of years a listening point was surveyed; ignored for the opportunistic dataset) and one column per habitat giving its area in the cell.
+
+The function `fun_simul_hab()` simulates data in this format, following the simulation design of @Coron2018:
+
+```{r}
+library(vgi4bio)
+sim <- fun_simul_hab(n_species = 10, n_sites = 15, n_std = 6, n_opp = 12, seed = 11)
+head(sim$obs)
+head(sim$cells)
+head(sim$sites)   # area of each habitat in each site
+```
+
+# Model fit
+
+```{r}
+fit <- fun_abund_hab_estim(sim$obs, sim$cells, standardized = "STD",
+                           habitats = c("hab1", "hab2"),
+                           engine = "nimble_hmc",
+                           n.chains = 3, n.burnin = 500, n.iter = 1000, thin = 1,
+                           seed = 1)
+fit
+```
+
+Three choices matter:
+
+* **`model`**: `"habitat"` (the model of @Coron2018, default), `"no_habitat"` (the model of @Giraud2015 at the cell level, fitted in the same Bayesian framework) or `"standardized_only"` (habitat model on the standardized data only);
+* **`effort`**: by default (`"marginalized"`), the unknown efforts of the opportunistic cells are integrated out analytically (multinomial distribution of the counts of a cell given their total), which gives the same posterior distribution for all the other parameters with far fewer parameters to sample. `"estimated"` reproduces the authors' parameterisation (one effort parameter per cell);
+* **`engine`**: `"jags"` (as the authors) or `"nimble_hmc"` (No-U-Turn sampler of nimble). The abundances and habitat preferences compensate each other, which makes JAGS mix very slowly. On the simulated data above, both engines give the same posterior distribution, but:
+
+| | JAGS | nimble HMC |
+|---|---|---|
+| iterations per chain (burn-in + kept) | 20000 + 60000 | 100 + 200 |
+| wall-clock time | 36 min | 9 min (including compilation) |
+| max Rhat | 1.04 | 1.05 |
+
+With short JAGS chains (2000 + 6000 iterations), many parameters had not converged (max Rhat 1.2 to 1.9) and the credible intervals were too narrow. **Always check the convergence** (`fit$rhat`, which should be below 1.1 for all parameters); a warning is issued otherwise.
+
+# Results
+
+Relative abundances of each species on each site (rescaled to sum to one across sites), with 95% credible intervals. They require the area of each habitat in each site:
+
+```{r}
+ra <- fun_rel_abund(fit, sites = sim$sites)
+head(ra)
+```
+
+Habitat selection of the species, relative to the first habitat (`scale = "ratio"`) or rescaled to sum to one across habitats (`scale = "sum"`), and habitat preferences of the observers of the opportunistic dataset:
+
+```{r}
+fun_hab_pref(fit)
+fun_hab_pref(fit, scale = "sum")
+fun_hab_pref(fit, who = "observers")
+```
+
+Predicted counts for an independent standardized survey (e.g. to validate the model against reference data, as with the STOC data in @Coron2018), given the effort and habitat composition of its cells:
+
+```{r}
+pred <- fun_pred_std(fit, sim$cells[sim$cells$dataset == "STD", ])
+head(pred)
+```
+
+# Reproducing Coron et al. (2018)
+
+The script `reproduce_coron2018.R`, installed with the package, reproduces Table 1 of @Coron2018 from the authors' data files (`datasetsFormer.RData` and `VolHabACTLPOSTOC7.csv`, not distributed with the package):
+
+```{r}
+system.file("scripts", "reproduce_coron2018.R", package = "vgi4bio")
+```
+
+On these data (34 species, 65 sites, 1524 communes), one JAGS iteration takes about 4 seconds and one NUTS iteration at least 20 seconds: a converged fit takes many hours and should be run on a dedicated machine. Note that the values published by @Coron2018 were obtained with a single chain of 500 JAGS iterations, which, according to our simulations, is far from convergence.
+
+# References

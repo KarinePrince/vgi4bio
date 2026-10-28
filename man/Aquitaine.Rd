@@ -17,17 +17,20 @@ by the ACT programme. For species with 0, \code{X_ACT} is a structural zero
 and must not be used as an observation.}
 \item{Effort_ACT}{numeric, number of point-count-years of the ACT
 programme on the site.}
-\item{Effort_STOC}{integer, sampling effort of the STOC programme on the
-site.}
-\item{Effort_LPO1, Effort_LPO2}{numeric, two alternative proxies of the
-opportunistic (LPO) sampling effort on the site (see Giraud et al.
-2016).}
+\item{Effort_STOC}{integer, number of point-count-years of the STOC
+programme on the site.}
+\item{Effort_LPO1}{numeric, area of the site, used as a first proxy of
+the opportunistic (LPO) sampling effort.}
+\item{Effort_LPO2}{integer, total number of birds recorded on the site
+by the LPO (all species pooled), used as an alternative proxy of the
+LPO sampling effort.}
 \item{X_ACT}{integer, count of the species on the site in the ACT
 programme.}
 \item{X_LPO}{integer, count of the species on the site in the
 opportunistic LPO data.}
-\item{X_ACTred}{integer, count of the species on the site in a reduced
-ACT dataset (subsample of \code{X_ACT}, see Giraud et al. 2016).}
+\item{X_ACTred}{integer, count of the species on the site in the
+artificially "reduced" ACT dataset (one point-count-year per site, see
+Giraud et al. 2016).}
 \item{X_STOC}{integer, count of the species on the site in the STOC
 programme (\code{NA} for sites not surveyed by STOC).}
 }

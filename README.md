@@ -13,15 +13,47 @@ Karine Princé
 The package vgi4bio contains functions to estimate relative species
 abundances from opportunistic records, using the data combination
 methods of Giraud et al. (2016, *Biometrics*,
-[doi:10.1111/biom.12431](https://doi.org/10.1111/biom.12431)). The
-estimation of habitat preferences (Coron et al. 2018, *Environmental and
+[doi:10.1111/biom.12431](https://doi.org/10.1111/biom.12431)). It also
+implements the Bayesian model of Coron et al. (2018, *Environmental and
 Ecological Statistics*,
-[doi:10.1007/s10651-018-0398-2](https://doi.org/10.1007/s10651-018-0398-2))
-is under development. To have an overview of the package, read the
-vignette after installing the package by:
+[doi:10.1007/s10651-018-0398-2](https://doi.org/10.1007/s10651-018-0398-2)),
+which additionally estimates the habitat preferences of the species and
+of the observers (requires [JAGS](https://mcmc-jags.sourceforge.io) and
+the R package `rjags`, or the R packages `nimble` and `nimbleHMC`).
+
+## Context
+
+This package was developed within the ANR project **VGI4BIO**, whose aim
+is to provide generic and reproducible tools to estimate trends in
+spatial distributions from opportunistic data, for a possible
+integration into the Galaxy platform (Galaxy-E). The Galaxy integration
+has not been done yet.
+
+## Main functions
+
+| Function                           | Purpose                                                                                                               |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `fun_abund_estim()`                | Fit the model of Giraud et al. (2016) (quasi-Poisson GLM combining standardized and opportunistic counts)             |
+| `fun_abund_hab_estim()`            | Fit the Bayesian model of Coron et al. (2018), with habitat preferences of species and observers (JAGS or nimble HMC) |
+| `fun_rel_abund()`                  | Extract the relative abundance of each species on each site, with confidence or credible intervals                    |
+| `fun_hab_pref()`                   | Extract the habitat preferences of species and observers (Coron et al. model)                                         |
+| `fun_pred_std()`                   | Predict the counts of an independent standardized survey (model validation)                                           |
+| `fun_pearsons()`, `fun_braycurt()` | Compare estimated and reference abundances (Pearson correlation, Bray-Curtis dissimilarity)                           |
+| `fun_simul_hab()`                  | Simulate data following the design of Coron et al. (2018)                                                             |
+
+The data set `Aquitaine` contains the bird counts used by Giraud et
+al. (2016). The script `inst/scripts/reproduce_coron2018.R` reproduces
+Table 1 of Coron et al. (2018) from the authors’ data files, which are
+not distributed with the package.
+
+## Documentation
+
+To have an overview of the package, read the vignettes after installing
+the package by:
 
 ``` r
-vignette("tutorial", package = "vgi4bio")
+vignette("tutorial", package = "vgi4bio")   # Giraud et al. (2016)
+vignette("habitat", package = "vgi4bio")    # Coron et al. (2018)
 ```
 
 ## Installing *vgi4bio*
@@ -43,6 +75,25 @@ Then:
 ``` r
 library(devtools)
 install_github("KarinePrince/vgi4bio", build_vignettes = TRUE)
+```
+
+The GitHub repository is currently **private**: to install the package,
+you need to be given access to the repository and to have a GitHub
+personal access token configured in R:
+
+``` r
+usethis::create_github_token()   # create the token on GitHub (scope "repo")
+gitcreds::gitcreds_set()         # store it
+```
+
+The Bayesian model of Coron et al. (2018) requires either
+[JAGS](https://mcmc-jags.sourceforge.io) (to be installed separately)
+and the R package `rjags`, or the R packages `nimble` and `nimbleHMC`
+(recommended, much faster convergence; a C++ compiler is needed):
+
+``` r
+install.packages("rjags")                      # after installing JAGS
+install.packages(c("nimble", "nimbleHMC"))
 ```
 
 The package is not (yet) available on CRAN.

@@ -20,17 +20,33 @@
 #' `scale = "sum"`) using the covariance matrix of the GLM, which includes
 #' the overdispersion when `family = "quasipoisson"`, then back-transformed.
 #'
-#' @param fit The output of [fun_abund_estim()].
+#' For a Bayesian model fitted by [fun_abund_hab_estim()], the relative
+#' abundance of species \eqn{i} on site \eqn{j} is computed for each
+#' posterior sample as \eqn{N_{ij} \sum_h S_{ih} V_{hj}} (Coron et al. 2018),
+#' where \eqn{V_{hj}} is the area of habitat \eqn{h} in site \eqn{j} given
+#' in `sites` (\eqn{N_{ij} V_j} for the `"no_habitat"` model), then
+#' rescaled to sum to one across sites. Only `scale = "sum"` is available.
+#' The posterior mean, standard deviation and equal-tailed credible interval
+#' are returned.
+#'
+#' @param fit The output of [fun_abund_estim()] or of [fun_abund_hab_estim()].
 #' @param scale `"sum"` (default) or `"none"`, see Description.
 #' @param level Confidence level of the intervals. Default 0.95.
 #' @param species Optional character vector: species for which abundances are
 #'   extracted. Default: all species of the model.
+#' @param sites For a model fitted by [fun_abund_hab_estim()] only: a
+#'   data.frame with a `site` column and one column per habitat giving the
+#'   area of each habitat in each site (all the sites of the model). For the
+#'   `"no_habitat"` model, if `NULL`, all sites are assumed to have the same
+#'   area.
 #'
 #' @return A data.frame with one row per species x site and the columns:
 #'   * `species`, `site`;
-#'   * `rel_abund`: relative abundance on the chosen scale;
-#'   * `se_log`: standard error of `log(rel_abund)`;
-#'   * `lower`, `upper`: confidence interval of `rel_abund`;
+#'   * `rel_abund`: relative abundance on the chosen scale (posterior mean
+#'     for a Bayesian model);
+#'   * `se_log`: standard error of `log(rel_abund)` (GLM), or `sd`: posterior
+#'     standard deviation of `rel_abund` (Bayesian model);
+#'   * `lower`, `upper`: confidence (GLM) or credible (Bayesian) interval;
 #'   * `in_standardized`: whether the species is recorded in the
 #'     standardized dataset.
 #'
@@ -39,7 +55,13 @@
 #' opportunistic data for monitoring relative abundances of species.
 #' *Biometrics*, 72(2), 649-658. \doi{10.1111/biom.12431}
 #'
-#' @seealso [fun_abund_estim()], [fun_pearsons()], [fun_braycurt()]
+#' Coron C., Calenge C., Giraud C. & Julliard R. (2018). Bayesian estimation
+#' of species relative abundances and habitat preferences using opportunistic
+#' data. *Environmental and Ecological Statistics*, 25(1), 71-93.
+#' \doi{10.1007/s10651-018-0398-2}
+#'
+#' @seealso [fun_abund_estim()], [fun_abund_hab_estim()], [fun_hab_pref()],
+#'   [fun_pearsons()], [fun_braycurt()]
 #' @importFrom stats coef delete.response model.frame model.matrix qnorm terms vcov
 #' @export
 #'
@@ -59,10 +81,16 @@
 #' # relative abundances sum to one for each species
 #' tapply(ra$rel_abund, ra$species, sum)
 fun_rel_abund <- function(fit, scale = c("sum", "none"), level = 0.95,
-                          species = NULL) {
+                          species = NULL, sites = NULL) {
   scale <- match.arg(scale)
+  if (inherits(fit, "vgi4bio_bayes")) {
+    if (scale != "sum")
+      stop("Only scale = \"sum\" is available for Bayesian models.", call. = FALSE)
+    return(.rel_abund_bayes(fit, level = level, species = species, sites = sites))
+  }
   if (!is.list(fit) || !inherits(fit$mod, "glm") || is.null(fit$standardized))
-    stop("'fit' must be the output of fun_abund_estim().", call. = FALSE)
+    stop("'fit' must be the output of fun_abund_estim() or fun_abund_hab_estim().",
+         call. = FALSE)
   if (!is.numeric(level) || length(level) != 1 || level <= 0 || level >= 1)
     stop("'level' must be a number between 0 and 1.", call. = FALSE)
 

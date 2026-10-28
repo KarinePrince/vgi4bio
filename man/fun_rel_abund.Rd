@@ -4,10 +4,16 @@
 \alias{fun_rel_abund}
 \title{Extract relative species abundances from a fitted combination model}
 \usage{
-fun_rel_abund(fit, scale = c("sum", "none"), level = 0.95, species = NULL)
+fun_rel_abund(
+  fit,
+  scale = c("sum", "none"),
+  level = 0.95,
+  species = NULL,
+  sites = NULL
+)
 }
 \arguments{
-\item{fit}{The output of \code{\link[=fun_abund_estim]{fun_abund_estim()}}.}
+\item{fit}{The output of \code{\link[=fun_abund_estim]{fun_abund_estim()}} or of \code{\link[=fun_abund_hab_estim]{fun_abund_hab_estim()}}.}
 
 \item{scale}{\code{"sum"} (default) or \code{"none"}, see Description.}
 
@@ -15,14 +21,22 @@ fun_rel_abund(fit, scale = c("sum", "none"), level = 0.95, species = NULL)
 
 \item{species}{Optional character vector: species for which abundances are
 extracted. Default: all species of the model.}
+
+\item{sites}{For a model fitted by \code{\link[=fun_abund_hab_estim]{fun_abund_hab_estim()}} only: a
+data.frame with a \code{site} column and one column per habitat giving the
+area of each habitat in each site (all the sites of the model). For the
+\code{"no_habitat"} model, if \code{NULL}, all sites are assumed to have the same
+area.}
 }
 \value{
 A data.frame with one row per species x site and the columns:
 \itemize{
 \item \code{species}, \code{site};
-\item \code{rel_abund}: relative abundance on the chosen scale;
-\item \code{se_log}: standard error of \code{log(rel_abund)};
-\item \code{lower}, \code{upper}: confidence interval of \code{rel_abund};
+\item \code{rel_abund}: relative abundance on the chosen scale (posterior mean
+for a Bayesian model);
+\item \code{se_log}: standard error of \code{log(rel_abund)} (GLM), or \code{sd}: posterior
+standard deviation of \code{rel_abund} (Bayesian model);
+\item \code{lower}, \code{upper}: confidence (GLM) or credible (Bayesian) interval;
 \item \code{in_standardized}: whether the species is recorded in the
 standardized dataset.
 }
@@ -48,6 +62,15 @@ recorded in the standardized dataset; \code{NA} for the others.
 Confidence intervals are computed on the log scale (delta method for
 \code{scale = "sum"}) using the covariance matrix of the GLM, which includes
 the overdispersion when \code{family = "quasipoisson"}, then back-transformed.
+
+For a Bayesian model fitted by \code{\link[=fun_abund_hab_estim]{fun_abund_hab_estim()}}, the relative
+abundance of species \eqn{i} on site \eqn{j} is computed for each
+posterior sample as \eqn{N_{ij} \sum_h S_{ih} V_{hj}} (Coron et al. 2018),
+where \eqn{V_{hj}} is the area of habitat \eqn{h} in site \eqn{j} given
+in \code{sites} (\eqn{N_{ij} V_j} for the \code{"no_habitat"} model), then
+rescaled to sum to one across sites. Only \code{scale = "sum"} is available.
+The posterior mean, standard deviation and equal-tailed credible interval
+are returned.
 }
 \examples{
 data(Aquitaine)
@@ -69,7 +92,13 @@ tapply(ra$rel_abund, ra$species, sum)
 Giraud C., Calenge C., Coron C. & Julliard R. (2016). Capitalizing on
 opportunistic data for monitoring relative abundances of species.
 \emph{Biometrics}, 72(2), 649-658. \doi{10.1111/biom.12431}
+
+Coron C., Calenge C., Giraud C. & Julliard R. (2018). Bayesian estimation
+of species relative abundances and habitat preferences using opportunistic
+data. \emph{Environmental and Ecological Statistics}, 25(1), 71-93.
+\doi{10.1007/s10651-018-0398-2}
 }
 \seealso{
-\code{\link[=fun_abund_estim]{fun_abund_estim()}}, \code{\link[=fun_pearsons]{fun_pearsons()}}, \code{\link[=fun_braycurt]{fun_braycurt()}}
+\code{\link[=fun_abund_estim]{fun_abund_estim()}}, \code{\link[=fun_abund_hab_estim]{fun_abund_hab_estim()}}, \code{\link[=fun_hab_pref]{fun_hab_pref()}},
+\code{\link[=fun_pearsons]{fun_pearsons()}}, \code{\link[=fun_braycurt]{fun_braycurt()}}
 }
