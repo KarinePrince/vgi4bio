@@ -77,15 +77,6 @@ library(devtools)
 install_github("KarinePrince/vgi4bio", build_vignettes = TRUE)
 ```
 
-The GitHub repository is currently **private**: to install the package,
-you need to be given access to the repository and to have a GitHub
-personal access token configured in R:
-
-``` r
-usethis::create_github_token()   # create the token on GitHub (scope "repo")
-gitcreds::gitcreds_set()         # store it
-```
-
 The Bayesian model of Coron et al. (2018) requires either
 [JAGS](https://mcmc-jags.sourceforge.io) (to be installed separately)
 and the R package `rjags`, or the R packages `nimble` and `nimbleHMC`
@@ -102,6 +93,14 @@ Once installed, the package can be loaded using:
 
 ``` r
 library(vgi4bio)
+```
+
+## Citation
+
+To cite the package and the papers describing the models:
+
+``` r
+citation("vgi4bio")
 ```
 
 *The package requires R \>= 3.5.*

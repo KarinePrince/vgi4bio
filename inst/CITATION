@@ -1,0 +1,55 @@
+citHeader("To cite the package vgi4bio in publications, please use the package",
+          "reference together with the paper(s) describing the model(s) used:")
+
+bibentry(
+  bibtype  = "Manual",
+  key      = "vgi4bio",
+  title    = "{vgi4bio}: Capitalizing on Opportunistic Data for Monitoring Relative Abundances of Species",
+  author   = person("Karine", "Princé",
+                    email = "karine.prince@mnhn.fr",
+                    comment = c(ORCID = "0000-0001-7739-7438")),
+  year     = "2026",
+  note     = paste("R package version", meta$Version),
+  url      = "https://github.com/KarinePrince/vgi4bio",
+  textVersion = paste0(
+    "Princé K. (2026). vgi4bio: Capitalizing on Opportunistic Data for ",
+    "Monitoring Relative Abundances of Species. R package version ",
+    meta$Version, ". https://github.com/KarinePrince/vgi4bio")
+)
+
+bibentry(
+  bibtype  = "Article",
+  key      = "Giraud2016",
+  title    = "Capitalizing on opportunistic data for monitoring relative abundances of species",
+  author   = c(person("Christophe", "Giraud"), person("Clément", "Calenge"),
+               person("Camille", "Coron"), person("Romain", "Julliard")),
+  journal  = "Biometrics",
+  year     = "2016",
+  volume   = "72",
+  number   = "2",
+  pages    = "649--658",
+  doi      = "10.1111/biom.12431",
+  textVersion = paste(
+    "Giraud C., Calenge C., Coron C. & Julliard R. (2016). Capitalizing on",
+    "opportunistic data for monitoring relative abundances of species.",
+    "Biometrics, 72(2), 649-658. https://doi.org/10.1111/biom.12431")
+)
+
+bibentry(
+  bibtype  = "Article",
+  key      = "Coron2018",
+  title    = "Bayesian estimation of species relative abundances and habitat preferences using opportunistic data",
+  author   = c(person("Camille", "Coron"), person("Clément", "Calenge"),
+               person("Christophe", "Giraud"), person("Romain", "Julliard")),
+  journal  = "Environmental and Ecological Statistics",
+  year     = "2018",
+  volume   = "25",
+  number   = "1",
+  pages    = "71--93",
+  doi      = "10.1007/s10651-018-0398-2",
+  textVersion = paste(
+    "Coron C., Calenge C., Giraud C. & Julliard R. (2018). Bayesian estimation",
+    "of species relative abundances and habitat preferences using opportunistic",
+    "data. Environmental and Ecological Statistics, 25(1), 71-93.",
+    "https://doi.org/10.1007/s10651-018-0398-2")
+)

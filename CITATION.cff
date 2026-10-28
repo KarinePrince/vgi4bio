@@ -1,0 +1,67 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below, as well as the papers describing the statistical models (see 'references')."
+type: software
+title: "vgi4bio: Capitalizing on Opportunistic Data for Monitoring Relative Abundances of Species"
+abstract: >-
+  R package providing functions, data sets and examples to estimate relative
+  species abundances and their habitat preferences by combining opportunistic
+  data (e.g. citizen science) with standardized monitoring data. It implements
+  the generalized linear model of Giraud et al. (2016) and the Bayesian model
+  of Coron et al. (2018), the latter with JAGS or a Hamiltonian Monte Carlo
+  (NUTS) sampler from nimble. Developed within the ANR project VGI4BIO.
+authors:
+  - family-names: "Princé"
+    given-names: "Karine"
+    email: "karine.prince@mnhn.fr"
+    orcid: "https://orcid.org/0000-0001-7739-7438"
+version: "0.1.0"
+date-released: "2026-10-28"
+license: GPL-3.0-only
+repository-code: "https://github.com/KarinePrince/vgi4bio"
+url: "https://github.com/KarinePrince/vgi4bio"
+keywords:
+  - R
+  - opportunistic data
+  - citizen science
+  - relative abundance
+  - habitat selection
+  - data integration
+  - species distribution
+  - biodiversity monitoring
+references:
+  - type: article
+    authors:
+      - family-names: "Giraud"
+        given-names: "Christophe"
+      - family-names: "Calenge"
+        given-names: "Clément"
+      - family-names: "Coron"
+        given-names: "Camille"
+      - family-names: "Julliard"
+        given-names: "Romain"
+    title: "Capitalizing on opportunistic data for monitoring relative abundances of species"
+    journal: "Biometrics"
+    volume: 72
+    issue: 2
+    start: 649
+    end: 658
+    year: 2016
+    doi: "10.1111/biom.12431"
+  - type: article
+    authors:
+      - family-names: "Coron"
+        given-names: "Camille"
+      - family-names: "Calenge"
+        given-names: "Clément"
+      - family-names: "Giraud"
+        given-names: "Christophe"
+      - family-names: "Julliard"
+        given-names: "Romain"
+    title: "Bayesian estimation of species relative abundances and habitat preferences using opportunistic data"
+    journal: "Environmental and Ecological Statistics"
+    volume: 25
+    issue: 1
+    start: 71
+    end: 93
+    year: 2018
+    doi: "10.1007/s10651-018-0398-2"

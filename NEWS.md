@@ -1,4 +1,9 @@
-# vgi4bio 0.0.0.9003
+# vgi4bio 0.1.0
+
+* First archived release (Zenodo). Citation files `CITATION.cff` and
+  `inst/CITATION` added: see `citation("vgi4bio")`.
+
+## Changes since 0.0.0.9002
 
 * New `fun_abund_hab_estim()`: Bayesian model of Coron et al. (2018),
   estimating relative abundances and habitat preferences of species and
