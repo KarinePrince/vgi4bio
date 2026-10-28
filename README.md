@@ -8,6 +8,8 @@ Karine Princé
 # vgi4bio
 
 <!-- badges: start -->
+
+[![DOI](https://zenodo.org/badge/337747952.svg)](https://doi.org/10.5281/zenodo.23735309)
 <!-- badges: end -->
 
 The package vgi4bio contains functions to estimate relative species
@@ -31,15 +33,15 @@ has not been done yet.
 
 ## Main functions
 
-| Function                           | Purpose                                                                                                               |
-|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `fun_abund_estim()`                | Fit the model of Giraud et al. (2016) (quasi-Poisson GLM combining standardized and opportunistic counts)             |
-| `fun_abund_hab_estim()`            | Fit the Bayesian model of Coron et al. (2018), with habitat preferences of species and observers (JAGS or nimble HMC) |
-| `fun_rel_abund()`                  | Extract the relative abundance of each species on each site, with confidence or credible intervals                    |
-| `fun_hab_pref()`                   | Extract the habitat preferences of species and observers (Coron et al. model)                                         |
-| `fun_pred_std()`                   | Predict the counts of an independent standardized survey (model validation)                                           |
-| `fun_pearsons()`, `fun_braycurt()` | Compare estimated and reference abundances (Pearson correlation, Bray-Curtis dissimilarity)                           |
-| `fun_simul_hab()`                  | Simulate data following the design of Coron et al. (2018)                                                             |
+| Function | Purpose |
+|----|----|
+| `fun_abund_estim()` | Fit the model of Giraud et al. (2016) (quasi-Poisson GLM combining standardized and opportunistic counts) |
+| `fun_abund_hab_estim()` | Fit the Bayesian model of Coron et al. (2018), with habitat preferences of species and observers (JAGS or nimble HMC) |
+| `fun_rel_abund()` | Extract the relative abundance of each species on each site, with confidence or credible intervals |
+| `fun_hab_pref()` | Extract the habitat preferences of species and observers (Coron et al. model) |
+| `fun_pred_std()` | Predict the counts of an independent standardized survey (model validation) |
+| `fun_pearsons()`, `fun_braycurt()` | Compare estimated and reference abundances (Pearson correlation, Bray-Curtis dissimilarity) |
+| `fun_simul_hab()` | Simulate data following the design of Coron et al. (2018) |
 
 The data set `Aquitaine` contains the bird counts used by Giraud et
 al. (2016). The script `inst/scripts/reproduce_coron2018.R` reproduces

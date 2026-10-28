@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 # vgi4bio
 
 <!-- badges: start -->
+[![DOI](https://zenodo.org/badge/337747952.svg)](https://doi.org/10.5281/zenodo.23735309)
 <!-- badges: end -->
 
 The package vgi4bio contains functions to estimate relative species abundances from opportunistic records, using the data combination methods of Giraud et al. (2016, *Biometrics*, [doi:10.1111/biom.12431](https://doi.org/10.1111/biom.12431)). It also implements the Bayesian model of Coron et al. (2018, *Environmental and Ecological Statistics*, [doi:10.1007/s10651-018-0398-2](https://doi.org/10.1007/s10651-018-0398-2)), which additionally estimates the habitat preferences of the species and of the observers (requires [JAGS](https://mcmc-jags.sourceforge.io) and the R package `rjags`, or the R packages `nimble` and `nimbleHMC`).
